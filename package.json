@@ -1,0 +1,19 @@
+{
+  "name": "seo-analyzer-api",
+  "version": "1.0.0",
+  "description": "SEO analysis REST API & MCP server — analyze any webpage for SEO scores, issues, and recommendations",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "mcp": "node src/mcp-server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": ["seo", "analyzer", "api", "mcp", "cheerio", "web-analysis"],
+  "author": "lazymac2x",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0"
+  }
+}

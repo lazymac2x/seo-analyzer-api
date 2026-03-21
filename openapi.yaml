@@ -1,0 +1,155 @@
+openapi: 3.0.3
+info:
+  title: SEO Analyzer API
+  description: |
+    Analyze any webpage for SEO scores, issues, and actionable recommendations.
+    No external API keys needed — just pass a URL and get a comprehensive SEO audit.
+  version: 1.0.0
+  contact:
+    name: lazymac2x
+    url: https://github.com/lazymac2x/seo-analyzer-api
+
+servers:
+  - url: https://seo-analyzer-api.p.rapidapi.com
+    description: RapidAPI production
+  - url: http://localhost:3400
+    description: Local development
+
+paths:
+  /api/v1/analyze:
+    get:
+      operationId: analyzeSeoGet
+      summary: Analyze SEO of a webpage
+      description: Fetches the given URL and returns a full SEO analysis with scores, issues, and recommendations.
+      parameters:
+        - name: url
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The URL to analyze (e.g. https://example.com)
+      responses:
+        "200":
+          description: SEO analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResult"
+        "400":
+          description: Missing url parameter
+        "500":
+          description: Analysis failed
+
+    post:
+      operationId: analyzeSeoPost
+      summary: Analyze SEO of a webpage (POST)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url:
+                  type: string
+                  description: The URL to analyze
+      responses:
+        "200":
+          description: SEO analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResult"
+        "400":
+          description: Missing url field
+        "500":
+          description: Analysis failed
+
+  /api/v1/compare:
+    post:
+      operationId: compareSeo
+      summary: Compare SEO of two webpages
+      description: Analyzes two URLs and returns a side-by-side SEO comparison.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url1, url2]
+              properties:
+                url1:
+                  type: string
+                  description: First URL to compare
+                url2:
+                  type: string
+                  description: Second URL to compare
+      responses:
+        "200":
+          description: Comparison result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComparisonResult"
+        "400":
+          description: Missing url1 or url2
+        "500":
+          description: Comparison failed
+
+components:
+  schemas:
+    AnalysisResult:
+      type: object
+      properties:
+        url:
+          type: string
+        analyzedAt:
+          type: string
+          format: date-time
+        statusCode:
+          type: integer
+        fetchTimeMs:
+          type: integer
+        overallScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        grade:
+          type: string
+          enum: [A, B, C, D, F]
+        scores:
+          type: object
+          description: Per-category scores (0-100)
+        details:
+          type: object
+          description: Detailed analysis per category
+        summary:
+          type: object
+          properties:
+            totalIssues:
+              type: integer
+            issues:
+              type: array
+              items:
+                type: string
+            recommendations:
+              type: array
+              items:
+                type: string
+
+    ComparisonResult:
+      type: object
+      properties:
+        comparedAt:
+          type: string
+          format: date-time
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnalysisResult"
+        comparison:
+          type: object
+          description: Category-by-category comparison with winners
+        overallWinner:
+          type: string
